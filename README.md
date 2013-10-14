@@ -1,0 +1,69 @@
+Fifa14Client
+===========
+Fifa14Client is a python library that allows you to interact with the Fifa 14 Ultimate Web App programmatically.
+
+Features
+=========
+*Logging in
+*Getting Coin Amount
+*Searching
+*Buying
+*Listing for auction
+*Quick Selling
+*Getting Tradepile,Unassigned pile, and Watchlist
+*Moving bewteen piles
+*Removing from watchlist
+
+Example Usage
+===========
+You can find an example of usage in the main.py, but anyways:
+
+```python
+from Fifa14Client import LoginManager
+from Fifa14Client import WebAppFunctioner
+import ConfigParser
+
+
+def do_main():
+    Config = ConfigParser.ConfigParser()
+    Config.read("accounts_example.ini")
+    for section in Config.sections():
+        email = Config.get(section, 'Email')
+        password = Config.get(section, 'Password')
+        security_hash = Config.get(section, 'SecurityHash')
+        form_data = eval(Config.get(section, 'FormData'))
+
+    login = LoginManager.LoginManager(email,password,security_hash,form_data)
+    print login.login()
+    func = WebAppFunctioner.WebAppFunctioner(login)
+    print func.get_coin_amount()
+
+
+
+if __name__ == "__main__":
+    do_main()
+```
+
+License
+===========
+The MIT License (MIT)
+
+Copyright (c) 2013 T.J.Corley
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
