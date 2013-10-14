@@ -16,6 +16,7 @@ class WebAppFunctioner(object):
     QUICKSELL_URL = 'https://utas.fut.ea.com/ut/game/fifa14/item/%s'
     WATCHLIST_URL = 'https://utas.fut.ea.com/ut/game/fifa14/watchlist'
     WATCHLIST_REMOVE_URL = 'https://utas.fut.ea.com/ut/game/fifa14/watchlist?tradeId=%s'
+    TRADE_PILE_REMOVE_URL = 'https://utas.fut.ea.com/ut/game/fifa14/trade/%s'
     
     def __init__(self,login_manager):
         self.login_manager = login_manager
@@ -105,6 +106,14 @@ class WebAppFunctioner(object):
                    'X-UT-SID':self.login_manager.X_UT_SID,
                    'X-HTTP-Method-Override':'DELETE'}
         the_url = self.WATCHLIST_REMOVE_URL % (card.tradeId)
+        r = requests.post(self.WATCHLIST_URL,headers = headers)
+        return "code" not in dict(r.json())
+    def remove_from_tradepile(self,card):
+        """Removes card from tradepile, returns True if successful"""
+        headers = {'X-UT-PHISHING-TOKEN':self.login_manager.FUTWEBPHISHING,
+                   'X-UT-SID':self.login_manager.X_UT_SID,
+                   'X-HTTP-Method-Override':'DELETE'}
+        the_url = self.TRADEPILE_REMOVE_URL % (card.tradeId)
         r = requests.post(self.WATCHLIST_URL,headers = headers)
         return "code" not in dict(r.json())
 
