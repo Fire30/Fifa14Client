@@ -6,8 +6,10 @@ class Card(object):
         self.card_dict = card_dict
         for key in card_dict:
             setattr(self, key, card_dict[key])
-        if self.itemData:
+        try:
             for key in self.itemData:
-               setattr(self, key, self.itemData[key]) 
+               setattr(self, key, self.itemData[key])
+        except:
+            pass
     def __repr__(self):
         return str(self.card_dict)
