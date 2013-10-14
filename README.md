@@ -14,6 +14,10 @@ Features
 * Moving bewteen piles
 * Removing from watchlist
 
+Prerequisites
+========
+* [requests 2.x](http://www.python-requests.org/en/latest/)
+
 Example Usage
 ===========
 You can find an example of usage in the main.py, but anyways:
