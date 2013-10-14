@@ -13,7 +13,7 @@ Features
 * Getting Tradepile,Unassigned pile, and Watchlist
 * Moving bewteen piles
 * Removing from watchlist
-
+* Removing from tradepile
 Prerequisites
 ========
 * [requests 2.x](http://www.python-requests.org/en/latest/)
