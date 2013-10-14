@@ -4,15 +4,15 @@ Fifa14Client is a python library that allows you to interact with the Fifa 14 Ul
 
 Features
 =========
-*Logging in
-*Getting Coin Amount
-*Searching
-*Buying
-*Listing for auction
-*Quick Selling
-*Getting Tradepile,Unassigned pile, and Watchlist
-*Moving bewteen piles
-*Removing from watchlist
+* Logging in
+* Getting Coin Amount
+* Searching
+* Buying
+* Listing for auction
+* Quick Selling
+* Getting Tradepile,Unassigned pile, and Watchlist
+* Moving bewteen piles
+* Removing from watchlist
 
 Example Usage
 ===========
