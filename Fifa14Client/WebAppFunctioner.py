@@ -7,7 +7,8 @@ class WebAppFunctioner(object):
     COIN_URL = 'https://utas.fut.ea.com/ut/game/fifa14/user/credits'
     TRANSFER_URL = 'https://utas.fut.ea.com/ut/game/fifa14/transfermarket?type=%s&lev=%s'\
                    '&pos=%s&num=%s&team=%s&macr=%s&micr=%s&minb=%s&nat=%s&maxb=%s'\
-                   '&playStyle=%s&leaga=%s&start=%s&cat=%s'
+                   '&playStyle=%s&leaga=%s&start=%s&cat=%s&definitionId=%s&maskedDefId=%s'
+    
     BID_URL = 'https://utas.fut.ea.com/ut/game/fifa14/trade/%s/bid'
     MOVE_URL = 'https://utas.fut.ea.com/ut/game/fifa14/item'
     UNASSIGNED_URL = 'https://utas.fut.ea.com/ut/game/fifa14/purchased/items'
@@ -16,7 +17,7 @@ class WebAppFunctioner(object):
     QUICKSELL_URL = 'https://utas.fut.ea.com/ut/game/fifa14/item/%s'
     WATCHLIST_URL = 'https://utas.fut.ea.com/ut/game/fifa14/watchlist'
     WATCHLIST_REMOVE_URL = 'https://utas.fut.ea.com/ut/game/fifa14/watchlist?tradeId=%s'
-    TRADE_PILE_REMOVE_URL = 'https://utas.fut.ea.com/ut/game/fifa14/trade/%s'
+    TRADEPILE_REMOVE_URL = 'https://utas.fut.ea.com/ut/game/fifa14/trade/%s'
     
     def __init__(self,login_manager):
         self.login_manager = login_manager
@@ -29,14 +30,33 @@ class WebAppFunctioner(object):
         r = requests.post(self.COIN_URL,headers = headers)
         coin_amount = dict(r.json())['credits']
         return coin_amount
-    def search(self,type = "",lev = "",pos = "",num = "",
-               team = "",macr = "", micr = "",minb = "",nat = "",maxb = "",
-               playStyle = "",leag = "",start = 0,cat = ""):
-        """Returns a list of Card objects from the search paramters given"""
+    def search(self,type = "",lev = "",pos = "",num = 10,team = "",
+               macr = "", micr = "",minb = "",nat = "",maxb = "",
+               playStyle = "",leag = "",start = 0,cat = "",
+               definitionId = "",maskedDefId = ""):
+        """ Returns a list of Card objects from the search paramters given
+            Args-
+            type - type of card eg player, development
+            lev -  quality of card = gold,bronze
+            pos - position
+            num - amount of cards to return
+            team - teamid
+            macr - max price
+            micr - min price
+            minb - min buy now
+            maxb - max buy now
+            playStyle - type of chemistry style
+            leag - league id
+            start - where to start
+            cat - category, ex contract
+            definitionId - you pass the assetId to it and it responds with only those types of cards
+            maskeddefId - not certain but seems to do the same as definitionId
+        """
         headers = {'X-UT-PHISHING-TOKEN':self.login_manager.FUTWEBPHISHING,
                    'X-UT-SID':self.login_manager.X_UT_SID,
                    'X-HTTP-Method-Override':'GET'}
-        the_url = self.TRANSFER_URL % (type,lev,pos,num,team,macr,micr,minb,nat,maxb,playStyle,leag,start,cat)
+        the_url = self.TRANSFER_URL % (type,lev,pos,num,team,macr,micr,minb,nat,maxb,
+                                       playStyle,leag,start,cat,definitionId,maskedDefId)
         r = requests.post(the_url,headers = headers)
         auction_info  = r.json()['auctionInfo']
         return [Card.Card(card_dict) for card_dict in auction_info]
