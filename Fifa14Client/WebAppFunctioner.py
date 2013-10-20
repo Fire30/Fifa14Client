@@ -127,13 +127,16 @@ class WebAppFunctioner(object):
                    'X-HTTP-Method-Override':'DELETE'}
         the_url = self.WATCHLIST_REMOVE_URL % (card.tradeId)
         r = requests.post(the_url,headers = headers)
-        return "code" not in dict(r.json())
+        try:
+            return "code" not in dict(r.json())
+        except:
+            return False
     def remove_from_tradepile(self,card):
         """Removes card from tradepile, returns True if successful"""
         headers = {'X-UT-PHISHING-TOKEN':self.login_manager.FUTWEBPHISHING,
                    'X-UT-SID':self.login_manager.X_UT_SID,
                    'X-HTTP-Method-Override':'DELETE'}
         the_url = self.TRADEPILE_REMOVE_URL % (card.tradeId)
-        r = requests.post(self.WATCHLIST_URL,headers = headers)
+        r = requests.post(the_url,headers = headers)
         return "code" not in dict(r.json())
 
