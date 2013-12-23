@@ -1,6 +1,7 @@
 from Fifa14Client import LoginManager
 from Fifa14Client import WebAppFunctioner
 import ConfigParser
+from extra import EAHash
 
 
 def do_main():
@@ -9,13 +10,14 @@ def do_main():
     for section in Config.sections():
         email = Config.get(section, 'Email')
         password = Config.get(section, 'Password')
-        security_hash = Config.get(section, 'SecurityHash')
+        secret_answer = Config.get(section, 'Secret')
+        security_hash = EAHash.EAHashingAlgorithm().EAHash(secret_answer)
         form_data = eval(Config.get(section, 'FormData'))
 
-    login = LoginManager.LoginManager(email,password,security_hash,form_data)
-    print login.login()
-    func = WebAppFunctioner.WebAppFunctioner(login)
-    print func.get_coin_amount()
+        login = LoginManager.LoginManager(email,password,security_hash,form_data)
+        print login.login()
+        func = WebAppFunctioner.WebAppFunctioner(login)
+        print func.get_coin_amount()
 
 
 
