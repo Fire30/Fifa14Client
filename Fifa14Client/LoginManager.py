@@ -1,14 +1,14 @@
 import json
 import requests
+import re
+import time
 
 
 class LoginManager(object):
-    def __init__(self, email, password, security_hash, form_data):
+    def __init__(self, email, password, security_hash):
         self.email = email
         self.password = password
         self.security_hash = security_hash
-        self.NUCID = form_data['nuc']
-        self.form_data = json.dumps(form_data, separators=(',', ':'))
         #Belows are the things we will need in login process
         self.EASFC_WEB_SESSION = ""
         self.XSRF_TOKEN = ""
@@ -20,7 +20,9 @@ class LoginManager(object):
         self.FUTWEBPHISHING = ""
 
     def login(self):
-        '''returns a tuple of (FUTWEBPHISHING,EASF-WEB-SESSION) as there are the only two keys needed for doing tasks in ultimate team'''
+        """ returns a tuple of (FUTWEBPHISHING,EASF-WEB-SESSION)
+            as there are the only two keys needed for doing tasks in ultimate team
+        """
         #This years ultimate teams login system is pointlessly complicated
         #go to ultimate team login and get XSRF and EASFC tokens.
         r = requests.get('http://www.easports.com/uk/fifa/football-club/ultimate-team', allow_redirects=False)
@@ -82,6 +84,45 @@ class LoginManager(object):
                    'XSRF-TOKEN': self.XSRF_TOKEN}
         r = requests.get(next_loc, headers=headers, cookies=cookies, allow_redirects=False)
         self.FUTWEB = r.cookies['futweb']
+        #Now we need to get the NucleusID
+        #All you do is go back to /iframe/fut and get it from the returned html
+        next_loc = 'http://www.easports.com/iframe/fut/'
+        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+        cookies = {'futweb': self.FUTWEB, 'EASFC-WEB-SESSION': self.EASFC_WEB_SESSION, 'hl': 'uk',
+                   'XSRF-TOKEN': self.XSRF_TOKEN}
+        r = requests.get(next_loc, headers=headers, cookies=cookies, allow_redirects=False)
+        #regex to find the nucleus id
+        m = re.findall("var EASW_ID = \'\d+\'", r.text)
+        self.NUCID =  m[0].split("'")[1]
+        #We need the form_data to complete the auth request
+        #You can get it from the below url
+        #You have to add the three tailing zeroes as pythons time isn't as accurate as php's
+        next_loc = "http://www.easports.com/iframe/fut/p/ut/game/fifa14/user/accountinfo?_=%s000" % (int(time.time()))
+        headers = {'Content-Type': 'application/json','Easw-Session-Data-Nucleus-Id': self.NUCID,
+                   'X-UT-Route': 'https://utas.fut.ea.com:443'}
+        cookies = {'futweb': self.FUTWEB, 'EASFC-WEB-SESSION': self.EASFC_WEB_SESSION, 'hl': 'uk',
+                   'XSRF-TOKEN': self.XSRF_TOKEN}
+        r = requests.get(next_loc, headers=headers, cookies=cookies, allow_redirects=False)
+        #This is the data we need for the form_data
+        personas = r.json()['userAccountInfo']['personas'][0]
+        self.personaName = personas['personaName']
+        self.platform =  personas['userClubList'][0]['platform']
+        self.personaId =  personas['personaId']
+
+        self.form_data = {
+            'isReadOnly':False,
+            'sku':'FUT14WEB',
+            'clientVersion':1,
+            'nuc':self.NUCID,
+            'nucleusPersonaId':self.personaId,
+            'nucleusPersonaDisplayName':self.personaName,
+            'nucleusPersonaPlatform':self.platform,
+            'locale':'en-GB',
+            'method':'authcode',
+            'priorityLevel':4,
+            'identification':{ "authCode": "" }
+        }
+        self.form_data = json.dumps(self.form_data, separators=(',', ':'))
         #Now time to go to http://www.easports.com/iframe/fut/p/ut/auth
         #We need to post the form_data
         #the response gives us the X-UT-SID that we need
