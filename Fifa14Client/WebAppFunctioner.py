@@ -28,10 +28,6 @@ class WebAppFunctioner(object):
                 'X-UT-SID': self.login_manager.x_ut_sid,
                 'X-HTTP-Method-Override': http_method}
 
-    def test_stuff(self):
-        """Returns amount of coins the account has"""
-        r = requests.post("https://utas.fut.ea.com/ut/game/fifa14/squad/0", headers=self.get_headers('GET'))
-        print r.text
     def get_coin_amount(self):
         """Returns amount of coins the account has"""
         r = requests.post(self.COIN_URL, headers=self.get_headers('GET'))
