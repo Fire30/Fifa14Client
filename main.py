@@ -12,8 +12,9 @@ def do_main():
         password = Config.get(section, 'Password')
         secret_answer = Config.get(section, 'Secret')
         security_hash = EAHash.EAHashingAlgorithm().EAHash(secret_answer)
+        platform = Config.get(section, 'Platform')
 
-        login = LoginManager.LoginManager(email,password,security_hash)
+        login = LoginManager.LoginManager(email,password,security_hash,platform)
         print login.login()
         func = WebAppFunctioner.WebAppFunctioner(login)
         print func.get_coin_amount()

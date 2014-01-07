@@ -10,12 +10,17 @@ class LoginManager(object):
     ACCOUNT_INFORMATION_URL = 'http://www.easports.com/iframe/fut/p/ut/game/fifa14/user/accountinfo?_=%s000'
     AUTH_URL = 'http://www.easports.com/iframe/fut/p/ut/auth'
     PHISH_URL = 'http://www.easports.com/iframe/fut/p/ut/game/fifa14/phishing/validate'
+    HOST_URL = 'https://utas.%sfut.ea.com:443'
 
-    def __init__(self, email, password, security_hash):
+    def __init__(self, email, password, security_hash,ini_platform):
         self.email = email
         self.password = password
         self.security_hash = security_hash
-
+        self.ini_platform = ini_platform
+        if self.ini_platform in ['pc','ps3']:
+            self.HOST_URL = self.HOST_URL % ('s2.')
+        else:
+            self.HOST_URL = self.HOST_URL % ('')
         #things that will be grabbed from the login process
         self.easfc = None
         self.xsrf = None
@@ -216,7 +221,7 @@ class LoginManager(object):
         keys are ['persona_name,platform,persona_id']
         """
         headers = {'Content-Type': 'application/json','Easw-Session-Data-Nucleus-Id': self.nucid,
-                   'X-UT-Route': 'https://utas.fut.ea.com:443'}
+                   'X-UT-Route': self.HOST_URL}
         cookies = {'futweb': self.futweb, 'EASFC-WEB-SESSION': self.easfc, 'hl': 'uk',
                    'XSRF-TOKEN': self.xsrf}
         #The argument for the url is php time
@@ -238,7 +243,7 @@ class LoginManager(object):
         Returns the X-UT-SID token
         """
         headers = {'Content-Type': 'application/json', 'Easw-Session-Data-Nucleus-Id': self.nucid,
-                   'Content-Length': len(self.form_data), 'X-UT-Route': 'https://utas.fut.ea.com:443'}
+                   'Content-Length': len(self.form_data), 'X-UT-Route': self.HOST_URL}
         cookies = {'futweb': self.futweb, 'EASFC-WEB-SESSION': self.easfc, 'hl': 'uk',
                    'XSRF-TOKEN': self.xsrf, 'device_view': 'not_mobile'}
         r = requests.post(self.AUTH_URL, headers=headers, cookies=cookies,
@@ -252,7 +257,7 @@ class LoginManager(object):
         headers = {'Content-Type': 'application/x-www-form-urlencoded',
                    'Easw-Session-Data-Nucleus-Id': self.nucid,
                    'Content-Length': len(self.form_data),
-                   'X-UT-Route': 'https://utas.fut.ea.com:443',
+                   'X-UT-Route': self.HOST_URL,
                    'X-UT-SID': self.x_ut_sid}
 
         cookies = {'futweb': self.futweb, 'EASFC-WEB-SESSION': self.easfc, 'hl': 'uk',
