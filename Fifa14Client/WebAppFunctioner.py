@@ -1,7 +1,5 @@
-import LoginManager
+from Fifa14Client import Card
 import requests
-import Card
-
 
 class WebAppFunctioner(object):
     COIN_URL = 'https://utas.fut.ea.com/ut/game/fifa14/user/credits'
@@ -24,12 +22,16 @@ class WebAppFunctioner(object):
 
     def get_headers(self, http_method):
         """ Returns the headers yo be used in the request
-            header_type is the http method ex GET,POST,PUT
+            header_type is the http method ex GET,POST,PUT,DELETE,etc
         """
-        return {'X-UT-PHISHING-TOKEN': self.login_manager.FUTWEBPHISHING,
-                'X-UT-SID': self.login_manager.X_UT_SID,
+        return {'X-UT-PHISHING-TOKEN': self.login_manager.fut_web_phishing,
+                'X-UT-SID': self.login_manager.x_ut_sid,
                 'X-HTTP-Method-Override': http_method}
 
+    def test_stuff(self):
+        """Returns amount of coins the account has"""
+        r = requests.post("https://utas.fut.ea.com/ut/game/fifa14/squad/0", headers=self.get_headers('GET'))
+        print r.text
     def get_coin_amount(self):
         """Returns amount of coins the account has"""
         r = requests.post(self.COIN_URL, headers=self.get_headers('GET'))
