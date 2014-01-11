@@ -152,10 +152,15 @@ class WebAppFunctioner(object):
             raise FUTErrorCodeException("Could not get tradepile.",json)
 
     def quicksell(self, card):
-        """Quicksell's specified card, returns True if successful"""
+        """Quicksells specified card, raises an exception on failure"""
         the_url = self.QUICKSELL_URL % (self.platform_string,card.id)
         r = requests.post(the_url, headers=self.get_headers('DELETE'))
-        return "code" not in dict(r.json())
+        try:
+            json = r.json()
+        except:
+            raise BadRequestException("Could not quicksell card. No JSON Object could be decoded.")
+        if 'code' in json:
+            raise FUTErrorCodeException("Could not quicksell card",json)
 
     def get_watchlist(self):
         """Returns a list of Card objects from the watchlist"""
