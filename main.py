@@ -15,7 +15,7 @@ def do_main():
         platform = Config.get(section, 'Platform')
 
         login = LoginManager.LoginManager(email,password,security_hash,platform)
-        print(login.login())
+        login.login()
         func = WebAppFunctioner.WebAppFunctioner(login)
         print(func.get_coin_amount())
 
