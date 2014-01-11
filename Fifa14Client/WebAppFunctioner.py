@@ -104,7 +104,7 @@ class WebAppFunctioner(object):
             raise FUTErrorCodeException("Could not move card to %s" % pile,json)
 
     def get_unassigned_pile(self):
-        """Returns a list of Card objects from the unnasigned pile"""
+        """Returns a list of Card objects from the unnasigned pile,raises exception on failure."""
         r = requests.post(self.UNASSIGNED_URL % self.platform_string, headers=self.get_headers('GET'))
         try:
             json = r.json()
