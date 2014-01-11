@@ -34,7 +34,9 @@ class WebAppFunctioner(object):
                 'X-HTTP-Method-Override': http_method}
 
     def get_coin_amount(self):
-        """Returns amount of coins the account has"""
+        """Returns amount of coins the account has
+           Raises Exception if unavailable to get coins
+        """
         r = requests.post(self.COIN_URL % self.platform_string, headers=self.get_headers('GET'))
         try:
             json = r.json()
