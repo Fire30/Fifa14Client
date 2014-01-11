@@ -1,5 +1,6 @@
 from Fifa14Client import Card
 import requests
+from Fifa14Client.Exceptions import BadRequestException,FUTErrorCodeException
 
 class WebAppFunctioner(object):
     COIN_URL = 'https://utas.%sfut.ea.com/ut/game/fifa14/user/credits'
@@ -35,8 +36,16 @@ class WebAppFunctioner(object):
     def get_coin_amount(self):
         """Returns amount of coins the account has"""
         r = requests.post(self.COIN_URL % self.platform_string, headers=self.get_headers('GET'))
-        coin_amount = dict(r.json())['credits']
-        return coin_amount
+        try:
+            json = r.json()
+        except ValueError:
+            raise BadRequestException('Json could not be decoded.')
+        if 'credits' in json:
+            return json['credits']
+        elif 'code' in json:
+            raise FUTErrorCodeException('Error retrieving coins\n',json)
+        else:
+            raise BadRequestException('Can not retrieve coins.')
 
     def search(self, type="", lev="", pos="", num=10, team="",
                macr="", micr="", minb="", nat="", maxb="",

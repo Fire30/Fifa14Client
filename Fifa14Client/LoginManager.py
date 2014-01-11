@@ -2,6 +2,7 @@ import json
 import requests
 import re
 import time
+from Fifa14Client.Exceptions import LoginException
 
 
 class LoginManager(object):
@@ -19,8 +20,10 @@ class LoginManager(object):
         self.ini_platform = ini_platform
         if self.ini_platform in ['pc','ps3']:
             self.HOST_URL = self.HOST_URL % ('s2.')
-        else:
+        elif self.ini_platform in ['xbox','ios','android']:
             self.HOST_URL = self.HOST_URL % ('')
+        else:
+            raise ValueError("Platform is invalid:platform must be xbox,ps3,pc,android,or ios")
         #things that will be grabbed from the login process
         self.easfc = None
         self.xsrf = None
@@ -95,7 +98,7 @@ class LoginManager(object):
             'isReadOnly':False,
             'sku':'FUT14WEB',
             'clientVersion':1,
-            'nuc':self.nucid,
+            'nuc':int(self.nucid),
             'nucleusPersonaId':self.persona_id,
             'nucleusPersonaDisplayName':self.persona_name,
             'nucleusPersonaPlatform':self.platform,
@@ -153,11 +156,14 @@ class LoginManager(object):
         r = requests.post(url, data=payload, allow_redirects=False, cookies=cookies)
         next_loc = r.headers['location']
         r = requests.get(next_loc, allow_redirects=False, headers={'Host': 'accounts.ea.com'})
-        return{
-            'sid':r.cookies['sid'],
-            'remid':r.cookies['remid'],
-            'next_loc':r.headers['location']
-        }
+        try:
+            return{
+                'sid':r.cookies['sid'],
+                'remid':r.cookies['remid'],
+                'next_loc':r.headers['location']
+            }
+        except:
+            raise LoginException("Login Failed: Email or Password is wrong.")
     def get_easfc_second_time(self,url):
         """
         Goes to the specified url and returns the new EASFC-WEB-SESSION cookie
@@ -249,6 +255,7 @@ class LoginManager(object):
         r = requests.post(self.AUTH_URL, headers=headers, cookies=cookies,
                           data=self.form_data)
         return r.json()['sid']
+
     def get_fut_web_phishing(self):
         """
         Goes to the phishing url and posts the security question hash.
@@ -265,6 +272,8 @@ class LoginManager(object):
         payload = {'answer': self.security_hash}
         r = requests.post(self.PHISH_URL, headers=headers,cookies=cookies, data=payload)
         #The name is not always the same, but it is always the first cookie.
-        fut_string = r.headers['Set-Cookie'].split(';')[0]
-        return fut_string.split('=')[1]
-
+        try:
+            fut_string = r.headers['Set-Cookie'].split(';')[0]
+            return fut_string.split('=')[1]
+        except:
+            raise LoginException("Login Failed:Security answer is incorrect.")
