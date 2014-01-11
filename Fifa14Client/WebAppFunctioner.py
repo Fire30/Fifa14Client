@@ -54,6 +54,7 @@ class WebAppFunctioner(object):
                playStyle="", leag="", start=0, cat="",
                definitionId="", maskedDefId=""):
         """ Returns a list of Card objects from the search paramters given
+            Raises an exception if the request fails.
             Args-
             type - type of card eg player, development
             lev -  quality of card = gold,bronze
@@ -74,8 +75,15 @@ class WebAppFunctioner(object):
         the_url = self.TRANSFER_URL % (self.platform_string,type, lev, pos, num, team, macr, micr, minb, nat, maxb,
                                        playStyle, leag, start, cat, definitionId, maskedDefId)
         r = requests.post(the_url, headers=self.get_headers('GET'))
-        auction_info = r.json()['auctionInfo']
-        return [Card.Card(card_dict) for card_dict in auction_info]
+        try:
+            json = r.json()
+        except:
+            raise BadRequestException("Could not complete search. No JSON object could be decoded")
+        if 'auctionInfo' in  json:
+            card_list = r.json()['auctionInfo']
+            return [Card.Card(card_dict) for card_dict in card_list]
+        elif 'code' in json:
+            raise FUTErrorCodeException("Could not get complete search.",json)
 
     def bid(self, card, price):
         """Bids on card that is specified in argument, raises exception if bid fails."""
