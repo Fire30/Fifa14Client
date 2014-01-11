@@ -187,8 +187,13 @@ class WebAppFunctioner(object):
             raise FUTErrorCodeException("Could not remove card from watchlist card",json)
 
     def remove_from_tradepile(self, card):
-        """Removes card from tradepile, returns True if successful"""
+        """Removes card from tradepile, raises an exception if it fails"""
         the_url = self.TRADEPILE_REMOVE_URL % (self.platform_string, card.tradeId)
         r = requests.post(the_url, headers=self.get_headers('DELETE'))
-        return "code" not in dict(r.json())
+        try:
+            json = r.json()
+        except:
+            raise BadRequestException("Could not remove card from tradepile. No JSON Object could be decoded.")
+        if 'code' in json:
+            raise FUTErrorCodeException("Could not remove card from tradepile",json)
 
