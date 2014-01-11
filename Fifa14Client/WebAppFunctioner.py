@@ -92,11 +92,16 @@ class WebAppFunctioner(object):
 
 
     def move(self, card, pile):
-        """Moves card to specified pile, returns True if successful"""
+        """Moves card to specified pile, raises an exception on failure"""
         payload = '{"itemData":[{"id":"%s","pile":"%s"}]}' % (card.id, pile)
         r = requests.post(self.MOVE_URL % self.platform_string, headers=self.get_headers('PUT'), data=payload)
         #There will be no code key in the json if the move is sucessful
-        return "code" not in dict(r.json())
+        try:
+            json = r.json()
+        except:
+            raise BadRequestException("Could not move card to %s. No JSON Object could be decoded." % pile)
+        if 'code' in json:
+            raise FUTErrorCodeException("Could not move card to %s" % pile,json)
 
     def get_unassigned_pile(self):
         """Returns a list of Card objects from the unnasigned pile"""
