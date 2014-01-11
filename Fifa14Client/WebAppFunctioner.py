@@ -126,7 +126,7 @@ class WebAppFunctioner(object):
 
 
     def list_card(self, card, starting_bid, buy_now_price=0, duration=3600):
-        """Lists card in transfer market for specified price and buy now price"""
+        """Lists card in transfer market for specified price and buy now price, Raises an exception on failure"""
         payload = '{"buyNowPrice":%s,"itemData":{"id":%s},"duration":%s,"startingBid":%s}' % \
                   (buy_now_price, card.id, duration, starting_bid)
         r = requests.post(self.LIST_CARD_URL % self.platform_string, headers=self.get_headers('POST'), data=payload)
