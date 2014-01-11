@@ -163,10 +163,17 @@ class WebAppFunctioner(object):
             raise FUTErrorCodeException("Could not quicksell card",json)
 
     def get_watchlist(self):
-        """Returns a list of Card objects from the watchlist"""
+        """Returns a list of Card objects from the watchlist, raises an exception on failure."""
         r = requests.post(self.WATCHLIST_URL % self.platform_string, headers=self.get_headers('GET'))
-        card_list = r.json()['auctionInfo']
-        return [Card.Card(card_dict) for card_dict in card_list]
+        try:
+            json = r.json()
+        except:
+            raise BadRequestException("Could not get watchlist. No JSON object could be decoded")
+        if 'auctionInfo' in  json:
+            card_list = r.json()['auctionInfo']
+            return [Card.Card(card_dict) for card_dict in card_list]
+        elif 'code' in json:
+            raise FUTErrorCodeException("Could not get watchlist.",json)
 
     def remove_card_from_watchlist(self, card):
         """Removes card from watchlist, returns True if successful"""
