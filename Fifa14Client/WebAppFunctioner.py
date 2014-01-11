@@ -106,8 +106,16 @@ class WebAppFunctioner(object):
     def get_unassigned_pile(self):
         """Returns a list of Card objects from the unnasigned pile"""
         r = requests.post(self.UNASSIGNED_URL % self.platform_string, headers=self.get_headers('GET'))
-        card_list = r.json()['itemData']
-        return [Card.Card(card_dict) for card_dict in card_list]
+        try:
+            json = r.json()
+        except:
+            raise BadRequestException("Could not get unassigned pile. No JSON object could be decoded")
+        if 'itemData' in  json:
+            card_list = r.json()['itemData']
+            return [Card.Card(card_dict) for card_dict in card_list]
+        elif 'code' in json:
+            raise FUTErrorCodeException("Could not get unassigned pile.",json)
+
 
     def list_card(self, card, starting_bid, buy_now_price=0, duration=3600):
         """Lists card in transfer market for specified price and buy now price"""
