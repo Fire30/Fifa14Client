@@ -78,12 +78,18 @@ class WebAppFunctioner(object):
         return [Card.Card(card_dict) for card_dict in auction_info]
 
     def bid(self, card, price):
-        """Bids on card that is specified in argument, returns True is succesfully bid on"""
+        """Bids on card that is specified in argument, raises exception if bid fails."""
         payload = '{"bid":%s}' % (price)
         the_url = self.BID_URL % (self.platform_string, card.tradeId)
         r = requests.post(the_url, headers=self.get_headers('PUT'), data=payload)
         #There will be no code key in the json if the bid is sucessful
-        return "code" not in dict(r.json())
+        try:
+            json = r.json()
+        except:
+            raise BadRequestException("Could not bid. No JSON Object could be decoded.")
+        if 'code' in json:
+            raise FUTErrorCodeException("Could not place bid.",json)
+
 
     def move(self, card, pile):
         """Moves card to specified pile, returns True if successful"""
