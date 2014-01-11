@@ -131,7 +131,12 @@ class WebAppFunctioner(object):
                   (buy_now_price, card.id, duration, starting_bid)
         r = requests.post(self.LIST_CARD_URL % self.platform_string, headers=self.get_headers('POST'), data=payload)
         #There will be no code key in the json if the listing is sucessful
-        return "code" not in dict(r.json())
+        try:
+            json = r.json()
+        except:
+            raise BadRequestException("Could not list card to tradepile. No JSON Object could be decoded.")
+        if 'code' in json:
+            raise FUTErrorCodeException("Could not list card in tradepile.",json)
 
     def get_tradepile(self):
         """Returns a list of Card objects from the tradepile"""
