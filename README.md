@@ -18,6 +18,7 @@ Features
 Prerequisites
 ========
 * [requests 2.x](http://www.python-requests.org/en/latest/)
+* [Python 2.x](http://www.python.org/download/releases/2.7.6)
 
 Example Usage
 ===========
