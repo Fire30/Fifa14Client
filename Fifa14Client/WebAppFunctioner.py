@@ -82,7 +82,7 @@ class WebAppFunctioner(object):
             raise BadRequestException("Could not complete search. No JSON object could be decoded")
         if 'auctionInfo' in  json:
             self.credits = json['credits']
-            card_list = r.json()['auctionInfo']
+            card_list = json['auctionInfo']
             return [Card.Card(card_dict) for card_dict in card_list]
         elif 'code' in json:
             raise FUTErrorCodeException("Could not get complete search.",json)
@@ -126,7 +126,7 @@ class WebAppFunctioner(object):
             raise BadRequestException("Could not get unassigned pile. No JSON object could be decoded")
         if 'itemData' in  json:
             self.credits = json['credits']
-            card_list = r.json()['itemData']
+            card_list = json['itemData']
             return [Card.Card(card_dict) for card_dict in card_list]
         elif 'code' in json:
             raise FUTErrorCodeException("Could not get unassigned pile.",json)
@@ -155,7 +155,7 @@ class WebAppFunctioner(object):
         except:
             raise BadRequestException("Could not get tradepile. No JSON object could be decoded")
         if 'auctionInfo' in  json:
-            card_list = r.json()['auctionInfo']
+            card_list = json['auctionInfo']
             self.credits = json['credits']
             return [Card.Card(card_dict) for card_dict in card_list]
         elif 'code' in json:
@@ -182,7 +182,7 @@ class WebAppFunctioner(object):
         except:
             raise BadRequestException("Could not get watchlist. No JSON object could be decoded")
         if 'auctionInfo' in  json:
-            card_list = r.json()['auctionInfo']
+            card_list = json['auctionInfo']
             self.credits = json['credits']
             return [Card.Card(card_dict) for card_dict in card_list]
         elif 'code' in json:
