@@ -202,10 +202,7 @@ class WebAppFunctioner(object):
         r = requests.post(the_url, headers=self.get_headers('DELETE'))
         try:
             json = r.json()
+            raise FUTErrorCodeException("Could not remove card from watchlist",json)
         except:
-            raise BadRequestException("Could not remove card from tradepile. No JSON Object could be decoded.")
-        if 'code' in json:
-            raise FUTErrorCodeException("Could not remove card from tradepile",json)
-        else:
-            self.credits = json['credits']
+            pass
 
