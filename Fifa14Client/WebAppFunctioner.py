@@ -24,6 +24,7 @@ class WebAppFunctioner(object):
             self.platform_string = 's2.'
         else:
             self.platform_string = ''
+        self.credits = self.get_coin_amount()
 
     def get_headers(self, http_method):
         """ Returns the headers yo be used in the request
@@ -80,6 +81,7 @@ class WebAppFunctioner(object):
         except:
             raise BadRequestException("Could not complete search. No JSON object could be decoded")
         if 'auctionInfo' in  json:
+            self.credits = json['credits']
             card_list = r.json()['auctionInfo']
             return [Card.Card(card_dict) for card_dict in card_list]
         elif 'code' in json:
@@ -97,6 +99,8 @@ class WebAppFunctioner(object):
             raise BadRequestException("Could not bid. No JSON Object could be decoded.")
         if 'code' in json:
             raise FUTErrorCodeException("Could not place bid.",json)
+        else:
+            self.credits = json['credits']
 
 
     def move(self, card, pile):
@@ -110,6 +114,8 @@ class WebAppFunctioner(object):
             raise BadRequestException("Could not move card to %s. No JSON Object could be decoded." % pile)
         if 'code' in json:
             raise FUTErrorCodeException("Could not move card to %s" % pile,json)
+        else:
+            self.credits = json['credits']
 
     def get_unassigned_pile(self):
         """Returns a list of Card objects from the unnasigned pile,raises exception on failure."""
@@ -119,6 +125,7 @@ class WebAppFunctioner(object):
         except:
             raise BadRequestException("Could not get unassigned pile. No JSON object could be decoded")
         if 'itemData' in  json:
+            self.credits = json['credits']
             card_list = r.json()['itemData']
             return [Card.Card(card_dict) for card_dict in card_list]
         elif 'code' in json:
@@ -137,6 +144,8 @@ class WebAppFunctioner(object):
             raise BadRequestException("Could not list card to tradepile. No JSON Object could be decoded.")
         if 'code' in json:
             raise FUTErrorCodeException("Could not list card in tradepile.",json)
+        else:
+            self.credits = json['credits']
 
     def get_tradepile(self):
         """Returns a list of Card objects from the tradepile, raises an exception on failure"""
@@ -147,6 +156,7 @@ class WebAppFunctioner(object):
             raise BadRequestException("Could not get tradepile. No JSON object could be decoded")
         if 'auctionInfo' in  json:
             card_list = r.json()['auctionInfo']
+            self.credits = json['credits']
             return [Card.Card(card_dict) for card_dict in card_list]
         elif 'code' in json:
             raise FUTErrorCodeException("Could not get tradepile.",json)
@@ -161,6 +171,8 @@ class WebAppFunctioner(object):
             raise BadRequestException("Could not quicksell card. No JSON Object could be decoded.")
         if 'code' in json:
             raise FUTErrorCodeException("Could not quicksell card",json)
+        else:
+            self.credits = json['credits']
 
     def get_watchlist(self):
         """Returns a list of Card objects from the watchlist, raises an exception on failure."""
@@ -171,6 +183,7 @@ class WebAppFunctioner(object):
             raise BadRequestException("Could not get watchlist. No JSON object could be decoded")
         if 'auctionInfo' in  json:
             card_list = r.json()['auctionInfo']
+            self.credits = json['credits']
             return [Card.Card(card_dict) for card_dict in card_list]
         elif 'code' in json:
             raise FUTErrorCodeException("Could not get watchlist.",json)
@@ -185,6 +198,8 @@ class WebAppFunctioner(object):
             raise BadRequestException("Could not remove card from watchlist. No JSON Object could be decoded.")
         if 'code' in json:
             raise FUTErrorCodeException("Could not remove card from watchlist card",json)
+        else:
+            self.credits = json['credits']
 
     def remove_from_tradepile(self, card):
         """Removes card from tradepile, raises an exception if it fails"""
@@ -196,4 +211,6 @@ class WebAppFunctioner(object):
             raise BadRequestException("Could not remove card from tradepile. No JSON Object could be decoded.")
         if 'code' in json:
             raise FUTErrorCodeException("Could not remove card from tradepile",json)
+        else:
+            self.credits = json['credits']
 
