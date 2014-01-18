@@ -189,14 +189,12 @@ class WebAppFunctioner(object):
         """Removes card from watchlist, raises an exception on failure."""
         the_url = self.WATCHLIST_REMOVE_URL % (self.platform_string, card.tradeId)
         r = requests.post(the_url, headers=self.get_headers('DELETE'))
+        #The response will be blank on success and will return json saying the reason it failed
         try:
             json = r.json()
+            raise FUTErrorCodeException("Could not remove card from watchlist",json)
         except:
-            raise BadRequestException("Could not remove card from watchlist. No JSON Object could be decoded.")
-        if 'code' in json:
-            raise FUTErrorCodeException("Could not remove card from watchlist card",json)
-        else:
-            self.credits = json['credits']
+            pass
 
     def remove_from_tradepile(self, card):
         """Removes card from tradepile, raises an exception if it fails"""
