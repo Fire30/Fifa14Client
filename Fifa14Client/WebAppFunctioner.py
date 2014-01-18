@@ -123,7 +123,6 @@ class WebAppFunctioner(object):
         except:
             raise BadRequestException("Could not get unassigned pile. No JSON object could be decoded")
         if 'itemData' in  json:
-            self.credits = json['credits']
             card_list = json['itemData']
             return [Card.Card(card_dict) for card_dict in card_list]
         elif 'code' in json:
