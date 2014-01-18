@@ -114,8 +114,6 @@ class WebAppFunctioner(object):
             raise BadRequestException("Could not move card to %s. No JSON Object could be decoded." % pile)
         if 'code' in json:
             raise FUTErrorCodeException("Could not move card to %s" % pile,json)
-        else:
-            self.credits = json['credits']
 
     def get_unassigned_pile(self):
         """Returns a list of Card objects from the unnasigned pile,raises exception on failure."""
