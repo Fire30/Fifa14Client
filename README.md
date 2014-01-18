@@ -44,7 +44,7 @@ def do_main():
         login = LoginManager.LoginManager(email,password,security_hash,platform)
         login.login()
         func = WebAppFunctioner.WebAppFunctioner(login)
-        print func.get_coin_amount()
+        print func.credits
 
 
 
