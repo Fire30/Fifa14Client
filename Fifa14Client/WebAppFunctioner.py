@@ -17,6 +17,7 @@ class WebAppFunctioner(object):
     WATCHLIST_URL = 'https://utas.%sfut.ea.com/ut/game/fifa14/watchlist'
     WATCHLIST_REMOVE_URL = 'https://utas.%sfut.ea.com/ut/game/fifa14/watchlist?tradeId=%s'
     TRADEPILE_REMOVE_URL = 'https://utas.%sfut.ea.com/ut/game/fifa14/trade/%s'
+    SQUAD_URL = 'https://utas.%sfut.ea.com/ut/game/fifa14/squad/%s'
 
     def __init__(self, login_manager):
         self.login_manager = login_manager
@@ -205,4 +206,20 @@ class WebAppFunctioner(object):
             raise FUTErrorCodeException("Could not remove card from watchlist",json)
         except:
             pass
+    def get_squad(self,squad_num):
+        """ Returns dict of the squad that you are requesting, raises an exception on failure
+            squad_num is the index of the squad that you want to get on the squads tab on the webapp
+        """
+        the_url = self.SQUAD_URL % (self.platform_string,squad_num)
+        r = requests.post(the_url,headers=self.get_headers('GET'))
+        try:
+            json = r.json()
+            if 'code' in json:
+                raise FUTErrorCodeException("Could not get squad",json)
+            else:
+                return json
+        except:
+            raise BadRequestException("Could not get squad.")
+
+
 
