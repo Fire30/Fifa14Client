@@ -3,6 +3,10 @@ import requests
 from Fifa14Client.Exceptions import BadRequestException,FUTErrorCodeException
 
 class WebAppFunctioner(object):
+    """
+     This class does what the webapp generally does.
+     I am slowly adding more things to it, hopefully it reaches feature parity to the webapp.
+    """
     COIN_URL = 'https://utas.%sfut.ea.com/ut/game/fifa14/user/credits'
     TRANSFER_URL = 'https://utas.%sfut.ea.com/ut/game/fifa14/transfermarket?type=%s&lev=%s' \
                    '&pos=%s&num=%s&team=%s&macr=%s&micr=%s&minb=%s&nat=%s&maxb=%s' \
