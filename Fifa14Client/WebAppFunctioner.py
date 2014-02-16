@@ -131,7 +131,10 @@ class WebAppFunctioner(object):
 
 
     def list_card(self, card, starting_bid, buy_now_price=0, duration=3600):
-        """Lists card in transfer market for specified price and buy now price, Raises an exception on failure"""
+        """Lists card in transfer market for specified price and buy now price
+            Returns the tradeId of the card that was just listed
+            Raises an exception on failure
+        """
         payload = '{"buyNowPrice":%s,"itemData":{"id":%s},"duration":%s,"startingBid":%s}' % \
                   (buy_now_price, card.id, duration, starting_bid)
         r = requests.post(self.LIST_CARD_URL % self.platform_string, headers=self.get_headers('POST'), data=payload)
@@ -142,6 +145,8 @@ class WebAppFunctioner(object):
             raise BadRequestException("Could not list card to tradepile. No JSON Object could be decoded.")
         if 'code' in json:
             raise FUTErrorCodeException("Could not list card in tradepile.",json)
+        else:
+            return json['id']
 
     def get_tradepile(self):
         """Returns a list of Card objects from the tradepile, raises an exception on failure"""
