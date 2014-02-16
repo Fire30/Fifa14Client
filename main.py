@@ -18,6 +18,7 @@ def do_main():
         login.login()
         func = WebAppFunctioner.WebAppFunctioner(login)
         print(func.get_coin_amount())
+        print(func.search())
 
 
 
