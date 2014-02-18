@@ -22,6 +22,7 @@ class WebAppFunctioner(object):
     WATCHLIST_REMOVE_URL = 'https://utas.%sfut.ea.com/ut/game/fifa14/watchlist?tradeId=%s'
     TRADEPILE_REMOVE_URL = 'https://utas.%sfut.ea.com/ut/game/fifa14/trade/%s'
     SQUAD_URL = 'https://utas.%sfut.ea.com/ut/game/fifa14/squad/%s'
+    CLUB_URL = 'https://utas.%sfut.ea.com/ut/game/fifa14/club?count=%s&level=%s&type=%s&start=%s'
 
     def __init__(self, login_manager):
         self.login_manager = login_manager
@@ -179,7 +180,7 @@ class WebAppFunctioner(object):
             json = r.json()
         except:
             raise BadRequestException("Could not get watchlist. No JSON object could be decoded")
-        if 'auctionInfo' in  json:
+        if 'auctionInfo' in json:
             card_list = json['auctionInfo']
             return [Card.Card(card_dict) for card_dict in card_list]
         elif 'code' in json:
@@ -219,6 +220,29 @@ class WebAppFunctioner(object):
                 return json
         except:
             raise BadRequestException("Could not get squad.")
+
+    def get_club(self ,count="", level="", type ="", start=""):
+        """
+            Returns a dict of Cards that contains all the items in your club excluding consumables
+            Raises an  exception on failure
+            count - the number of cards you want to request
+            level - Not quite sure, It always seems to be 10
+            type - the type of card that you need:
+                set to 1 for players
+                set to 100 for staff
+                set to 142 for club items
+        """
+        the_url = self.CLUB_URL % (self.platform_string,count,level,type,start)
+        r = requests.post(the_url, headers=self.get_headers('GET'))
+        try:
+            json = r.json()
+            if 'code' in json:
+                raise FUTErrorCodeException("Could not get squad",json)
+            else:
+                return [Card.Card(card) for card in json['itemData']]
+        except:
+            raise BadRequestException("Could not get items from club.")
+
 
 
 
