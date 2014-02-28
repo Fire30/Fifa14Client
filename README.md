@@ -14,6 +14,8 @@ Features
 * Moving bewteen piles
 * Removing from watchlist
 * Removing from tradepile
+* Getting Squads
+* Getting items in the club
 
 Prerequisites
 ========
