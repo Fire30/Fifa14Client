@@ -23,6 +23,8 @@ class WebAppFunctioner(object):
     TRADEPILE_REMOVE_URL = 'https://utas.%sfut.ea.com/ut/game/fifa14/trade/%s'
     SQUAD_URL = 'https://utas.%sfut.ea.com/ut/game/fifa14/squad/%s'
     CLUB_URL = 'https://utas.%sfut.ea.com/ut/game/fifa14/club?count=%s&level=%s&type=%s&start=%s'
+    ACCOUNT_URL = 'https://utas.%sfut.ea.com/ut/game/fifa14/user'
+    LEADER_URL = 'https://utas.%sfut.ea.com/ut/game/fifa14/leaderboards/period/alltime/user/%s'
 
     def __init__(self, login_manager):
         self.login_manager = login_manager
@@ -243,6 +245,38 @@ class WebAppFunctioner(object):
         except:
             raise BadRequestException("Could not get items from club.")
 
+    def get_user_id(self):
+        '''Returns user id of current account'''
+        the_url = self.ACCOUNT_URL % self.platform_string
+        r = requests.post(the_url,headers=self.get_headers('GET'))
+        try:
+            json = r.json()
+            if 'code' in json:
+                print FUTErrorCodeException("Could not get user id",json)
+            else:
+                return json['personaId']
+        except:
+            raise BadRequestException("Could not get user id.")
 
+    def get_leaderboard_stats(self,stat):
+        """Returns desired leaderboard stats for user"""
+        userId = self.get_user_id()
+        the_url = self.LEADER_URL % (self.platform_string, userId)
+        print the_url
 
+        r =  requests.post(the_url,headers=self.get_headers('GET'))
+               
+        sIndex = {'earnings': 0, #competitor
+        'transfer': 1, #trader
+        'club_value': 2, #collector
+        'top_squad': 3} #builder
 
+        try:
+            json = r.json()
+            print json
+            if 'code' in json:
+                print FUTErrorCodeException("Could not get leaderboard",json)
+            else:
+                return json['category'][sIndex[stat]]['score']['value']
+        except:
+            raise BadRequestException("Could not get leaderboard.")
