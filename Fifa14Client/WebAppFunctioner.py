@@ -273,7 +273,6 @@ class WebAppFunctioner(object):
 
         try:
             json = r.json()
-            print json
             if 'code' in json:
                 print FUTErrorCodeException("Could not get leaderboard",json)
             else:
