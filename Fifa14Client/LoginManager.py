@@ -73,9 +73,7 @@ class LoginManager(object):
         next_loc = tokens['next_loc']
 
         #here comes some more redirects...
-        #Now the sid token is refreshed and we need to grab it again
-        tokens = self.get_sid_second_time(next_loc)
-        self.sid = tokens['sid']
+        tokens = self.get_next_loc(next_loc)
         next_loc = tokens['next_loc']
 
         #Next step is to refresh futweb token
@@ -185,7 +183,7 @@ class LoginManager(object):
             'futweb':r.cookies['futweb'],
             'next_loc':r.headers['location']
         }
-    def get_sid_second_time(self,url):
+    def get_next_loc(self,url):
         """
         Goes to the url specified and grabs the sid cookie
         returns a dict of the sid token and the location response header
@@ -194,7 +192,6 @@ class LoginManager(object):
         cookies = {'sid': self.sid, 'remid': self.remid}
         r = requests.get(url, cookies=cookies, allow_redirects=False)
         return{
-            'sid':r.cookies['sid'],
             'next_loc':r.headers['location']
         }
     def get_futweb_second_time(self,url):
