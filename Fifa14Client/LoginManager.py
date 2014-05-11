@@ -94,9 +94,9 @@ class LoginManager(object):
         #Now we need to set up the form_data
         self.form_data = {
             'isReadOnly':False,
-            'sku':'FUT14WEB',
-            'clientVersion':1,
-            'nuc':int(self.nucid),
+            'sku':'FUT14IOS',
+            'clientVersion':8,
+            'nuc':self.nucid,
             'nucleusPersonaId':self.persona_id,
             'nucleusPersonaDisplayName':self.persona_name,
             'nucleusPersonaPlatform':self.platform,
